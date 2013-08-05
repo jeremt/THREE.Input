@@ -41,6 +41,7 @@ var _keyUp = {};
 
 var _isKeyPressed = false;
 var _isMousePressed = false;
+var _isMouseDown = false;
 var _mouseX = 0;
 var _mouseY = 0;
 var _mouseButton = "none";
@@ -62,6 +63,7 @@ var _onMouseDown  = function (e) {
     break;
   }
   _isMousePressed = true;
+  _isMouseDown = false;
 }
 
 var _onMouseMove  = function (e) {
@@ -218,6 +220,19 @@ THREE.Input.getMouseButton = function () {
  */
 THREE.Input.isMousePressed = function () {
   return _isMousePressed;
+}
+
+/**
+ * Return true if the mouse has just been pressed.
+ */
+THREE.Input.isMouseDown = function () {
+  if (THREE.Input.isMousePressed()) {
+    if (_isMouseDown)
+      return false;
+    _isMouseDown = true;
+    return true;
+  }
+  return false;
 }
 
 /**
