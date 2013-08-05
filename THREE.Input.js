@@ -39,16 +39,52 @@ var _modifiers = new Array(4);
 var _keyDown = {};
 var _keyUp = {};
 
-var _isPressed = false;
+var _isKeyPressed = false;
+var _isMousePressed = false;
+var _mouseX = 0;
+var _mouseY = 0;
+var _mouseButton = "none";
 
-var _onKeyDown = function (e) { _onKey(e, true); };
-var _onKeyUp   = function (e) { _onKey(e, false); };
+var _onKeyDown    = function (e) {_onKey(e, true)}
+var _onKeyUp      = function (e) {_onKey(e, false)}
+
+var _onMouseUp    = function (e) {
+  _isMousePressed = false;
+  _mouseButton = "none";
+
+}
+
+var _onMouseDown  = function (e) {
+  switch (e.button) {
+    case 0: _mouseButton = "left"; break;
+    case 1: _mouseButton = "middle"; break;
+    case 2: _mouseButton = "right"; break;
+    break;
+  }
+  _isMousePressed = true;
+}
+
+var _onMouseMove  = function (e) {
+  _mouseX = e.clientX;
+  _mouseY = e.clientY;
+  if (_mouseX < 0)
+    _mouseX = 0;
+  if (_mouseX > window.innerWidth)
+    _mouseX = window.innerWidth;
+  if (_mouseY < 0)
+    _mouseY = 0;
+  if (_mouseY > window.innerHeight)
+    _mouseY = window.innerHeight;
+}
 
 document.addEventListener("keydown", _onKeyDown, false);
 document.addEventListener("keyup", _onKeyUp, false);
+document.addEventListener("mousedown", _onMouseDown, false);
+document.addEventListener("mouseup", _onMouseUp, false);
+document.addEventListener("mousemove", _onMouseMove, false);
 
 function _onKey(e, pressed) {
-  _isPressed = pressed;
+  _isKeyPressed = pressed;
   _keyCodes[e.keyCode] = pressed;
   switch (e.keyIdentifier) {
     case "U+0000":
@@ -67,7 +103,7 @@ function _onKey(e, pressed) {
   var arr = pressed ? _keyUp : _keyDown;
   for (var key in arr)
     arr[key] = false;
-};
+}
 
 THREE.Input.isKeyDown = function (keyDesc) {
   if (THREE.Input.isKeyPressed(keyDesc)) {
@@ -101,11 +137,11 @@ THREE.Input.isKeyPressed = function (keyDesc) {
   var keys, pressed, key, modif;
 
   switch (typeof keyDesc) {
-    case "undefined": return _isPressed;
+    case "undefined": return _isKeyPressed;
     case "number": return _keyCodes[code];
     case "string": keys = keyDesc.split("+"); break;
     default: throw Error("The key `"+keyDesc+"` have to be undefined, a number or a string.");
-  };
+  }
   key = keys.length == 1 ? keys[0] : keys[1];
   modif = keys.length == 1 ? null : keys[0];
   if(Object.keys(ALIAS).indexOf(key) !== -1)
@@ -122,7 +158,7 @@ THREE.Input.isKeyPressed = function (keyDesc) {
     pressed = _modifiers[ modif ];
   }
   return pressed;
-};
+}
 
 /**
  * This function allow you to add some aliases to specifiques keycodes
@@ -137,7 +173,7 @@ THREE.Input.setAlias = function (key) {
   ALIAS[key] = [];
   for (var i = 1 ; i < arguments.length ; ++i)
     ALIAS[key].push(arguments[i]);
-};
+}
 
 /**
  * Return the keyCodes of the alias
@@ -147,13 +183,63 @@ THREE.Input.setAlias = function (key) {
 */
 THREE.Input.getAlias = function (key) {
   return ALIAS[key];
-};
+}
 
 /**
  * Dump the aliases list
 */
 THREE.Input.showAlias = function () {
   console.log(JSON.stringify(ALIAS));
-};
+}
+
+/**
+ * Return mouse X position on the screen.
+ */
+THREE.Input.getMouseX = function () {
+  return _mouseX;
+}
+
+/**
+ * Return mouse Y position on the screen.
+ */
+THREE.Input.getMouseY = function () {
+  return _mouseY;
+}
+
+/**
+ * Return current mouse button.
+ */
+THREE.Input.getMouseButton = function () {
+  return _mouseButton;
+}
+
+/**
+ * Return true if the mouse is pressed, false otherwise.
+ */
+THREE.Input.isMousePressed = function () {
+  return _isMousePressed;
+}
+
+/**
+ * TODO - Returns the value of the virtual axis
+ * identified by `axisName`.
+ */
+THREE.Input.getAxis = function (axisName) {
+  switch (axisName) {
+    case "mouse x":
+      // TODO
+      return 0;
+    case "mouse y":
+      // TODO
+      return 0;
+    case "arrows x":
+      // TODO
+      return 0;
+    case "arrows y":
+      // TODO
+      return 0;
+  }
+  return 0;
+}
 
 }();

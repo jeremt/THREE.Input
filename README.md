@@ -7,5 +7,5 @@ TODO
 ----
 
 - Find a better way to handle isKeyUp() (right now the event works only with one key).
-- Handle mouse events.
+- Input.getAxis()
 - Handle joysticks.

@@ -4,6 +4,10 @@
 var context = new THREE.Context();
 
 context.handleInput = function (event) {
+  if (THREE.Input.isMousePressed()) {
+    console.log(  "X = ", THREE.Input.getMouseX(),
+                ", Y = ", THREE.Input.getMouseY());
+  }
   if (THREE.Input.isKeyDown("P")) {
     this.cube.scale.x += 0.1;
     this.cube.scale.y += 0.1;    
