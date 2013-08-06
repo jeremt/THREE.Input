@@ -38,8 +38,8 @@ var _modifiers = new Array(4);
 
 var _keyDown = {};
 var _keyUp = {};
+var _keyTime = {};
 
-var _keyCurrentTime = 0;
 var _textEntered = null;
 var _isKeyPressed = false;
 var _isMousePressed = false;
@@ -161,13 +161,13 @@ THREE.Input.isKeyUp = function (keyDesc) {
  */
 THREE.Input.isKeyRepeat = function (keyDesc, delay, delta) {
   if (this.isKeyPressed(keyDesc)) {
-    if (_keyCurrentTime <= 0) {
-      _keyCurrentTime = delay;
+    if (_keyTime[keyDesc] <= 0) {
+      _keyTime[keyDesc] = delay;
       return true;
     }
-    _keyCurrentTime -= delta;
+    _keyTime[keyDesc] -= delta;
   } else
-    _keyCurrentTime = 0;
+    _keyTime[keyDesc] = 0;
   return false;
 }
 
