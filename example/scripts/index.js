@@ -7,21 +7,24 @@ context.handleInput = function (event) {
   if (THREE.Input.isMousePressed()) {
     console.log(  "X = ", THREE.Input.getMouseX(),
                 ", Y = ", THREE.Input.getMouseY());
-  }
-  if (THREE.Input.isKeyDown("P")) {
+  } else if (THREE.Input.isKeyDown("P")) {
     this.cube.scale.x += 0.1;
     this.cube.scale.y += 0.1;    
     this.cube.scale.z += 0.1;    
-  }
-  if (THREE.Input.isKeyDown("M")) {
+  } else if (THREE.Input.isKeyDown("M")) {
     this.cube.scale.x -= 0.1;
     this.cube.scale.y -= 0.1;
     this.cube.scale.z -= 0.1;
-  }
-  if (THREE.Input.isKeyPressed("shift+space")) {
+  } else if (THREE.Input.isKeyPressed("shift+space")) {
     this.cubeHue += event.deltaTime;
     if (this.cubeHue > 1)
       this.cubeHue = 0;
+  } else if (THREE.Input.isKeyRepeat("enter", 0.5, event.deltaTime)) {
+    console.log("REPEAT ENTER");
+  } else {
+    var txt = THREE.Input.getTextEntered();
+    if (txt)
+      console.log(txt)
   }
 }
 

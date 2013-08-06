@@ -39,6 +39,8 @@ var _modifiers = new Array(4);
 var _keyDown = {};
 var _keyUp = {};
 
+var _keyCurrentTime = 0;
+var _textEntered = null;
 var _isKeyPressed = false;
 var _isMousePressed = false;
 var _isMouseDown = false;
@@ -49,6 +51,7 @@ var _mouseButton = "none";
 
 var _onKeyDown    = function (e) {_onKey(e, true)}
 var _onKeyUp      = function (e) {_onKey(e, false)}
+var _onKeyPress   = function (e) {_keyCodeToText(e.keyCode, e.shiftKey)}
 
 var _onMouseUp    = function (e) {
   _isMousePressed = false;
@@ -83,11 +86,12 @@ var _onMouseMove  = function (e) {
 
 document.addEventListener("keydown", _onKeyDown, false);
 document.addEventListener("keyup", _onKeyUp, false);
+document.addEventListener("keypress", _onKeyPress, false);
 document.addEventListener("mousedown", _onMouseDown, false);
 document.addEventListener("mouseup", _onMouseUp, false);
 document.addEventListener("mousemove", _onMouseMove, false);
 
-function _onKey(e, pressed) {
+var _onKey = function (e, pressed) {
   _isKeyPressed = pressed;
   _keyCodes[e.keyCode] = pressed;
   switch (e.keyIdentifier) {
@@ -109,6 +113,22 @@ function _onKey(e, pressed) {
     arr[key] = false;
 }
 
+var _keyCodeToText = function (keyCode) {
+  _textEntered = String.fromCharCode(keyCode);
+}
+
+/**
+ * Return to current char when user type text.
+ */
+THREE.Input.getTextEntered = function () {
+  var tmp = _textEntered;
+  _textEntered = null;
+  return tmp;
+}
+
+/**
+ * Check if the key has just been pressed.
+ */
 THREE.Input.isKeyDown = function (keyDesc) {
   if (THREE.Input.isKeyPressed(keyDesc)) {
     if (_keyDown[keyDesc])
@@ -119,6 +139,9 @@ THREE.Input.isKeyDown = function (keyDesc) {
   return false;
 }
 
+/**
+ * Check if the key has just been released.
+ */
 THREE.Input.isKeyUp = function (keyDesc) {
   if (!THREE.Input.isKeyPressed(keyDesc)) {
     if (_keyUp[keyDesc])
@@ -126,6 +149,25 @@ THREE.Input.isKeyUp = function (keyDesc) {
     _keyUp[keyDesc] = true;
     return true;
   }
+  return false;
+}
+
+/**
+ * Check if the given key is pressed according an interval.
+ *
+ * @param {String} keyDesc the description of the key.
+ * @param {Number} delay the delay between each check.
+ * @param {Number} delta the delta time for the current frame.
+ */
+THREE.Input.isKeyRepeat = function (keyDesc, delay, delta) {
+  if (this.isKeyPressed(keyDesc)) {
+    if (_keyCurrentTime <= 0) {
+      _keyCurrentTime = delay;
+      return true;
+    }
+    _keyCurrentTime -= delta;
+  } else
+    _keyCurrentTime = 0;
   return false;
 }
 
